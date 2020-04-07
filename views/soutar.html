@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Soutar</title>
+    <link rel="stylesheet" type="text/css" href="styles/chalcedon.css">
+    <link id="favicon" rel="icon" href="https://cdn.glitch.com/8199502f-e529-4aa4-ba55-e8b0a29c18a5%2Ffavicon.png?v=1582805891417" type="image/png">
+  </head>
+  <body>
+    <script src="/scripts/three.min.js"></script>
+    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/loaders/GLTFLoader.js"></script>
+    <script>
+      let scene, camera, renderer, soutar, sphere, mixer, soutarAnimation, spaceSound, soutarSpeech;
+      let add = 0.0005; 
+      
+      function init() {
+        scene = new THREE.Scene();
+        clock = new THREE.Clock();
+        initCamera();
+        initRenderer();
+        initLights();
+        initSphere();
+        initSoutar();
+        initSpaceSound();
+        initSoutarSpeech();
+      }
+          
+      function initCamera() {
+        camera = new THREE.PerspectiveCamera( 25, window.innerWidth / window.innerHeight, 1, 20000 );
+        camera.position.set( 1, 1, 20 );
+      }
+
+      function initRenderer() {
+        renderer = new THREE.WebGLRenderer({ alpha: true });
+        renderer.setPixelRatio( window.devicePixelRatio );
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+      }
+     
+      function initLights() {
+        const ambientLight = new THREE.AmbientLight( 0x404040 );
+        scene.add( ambientLight );
+
+        const directionalLight = new THREE.DirectionalLight( 0xffffff , 2);
+        directionalLight.position.set( 0, 1, 1 ).normalize();
+        scene.add( directionalLight );
+      }
+      
+      function initSpaceSound() {
+        const spaceListener = new THREE.AudioListener();
+        camera.add(spaceListener);
+        spaceSound = new THREE.Audio(spaceListener);
+        const audioLoader = new THREE.AudioLoader();
+        try {
+            audioLoader.load('https://cdn.glitch.com/8199502f-e529-4aa4-ba55-e8b0a29c18a5%2FspaceNoise.mp3?v=1583776345214', buffer => {
+            spaceSound.setBuffer(buffer);
+            spaceSound.setLoop(true);
+            spaceSound.setVolume(0.5);
+            spaceSound.play();
+          });
+        }catch(err) {
+          console.log(err.name + ': ' + err.message);
+        }
+      }
+      
+       function initSoutarSpeech() {
+        const soutarListener = new THREE.AudioListener();
+        camera.add(soutarListener);
+        soutarSpeech = new THREE.Audio(soutarListener);
+        const audioLoader = new THREE.AudioLoader();
+        try {
+          audioLoader.load("https://cdn.glitch.com/8199502f-e529-4aa4-ba55-e8b0a29c18a5%2FsoutarGreetings.mp3?v=1584707458561", buffer => {
+            soutarSpeech.setBuffer(buffer);
+            // soutarSpeech.setVolume(0.7); 
+          });
+        }catch(err) {
+          console.log(err.name + ': ' + err.message);
+        }
+      }
+      
+      function soutarSpeak() {
+        soutarSpeech.play();
+      }
+      
+       function initSphere() {
+          let geometry = new THREE.SphereGeometry(4, 8, 8);
+          let material = new THREE.MeshBasicMaterial({color: 0xcc00ff, wireframe: true});
+          sphere = new THREE.Mesh(geometry, material);
+          sphere.position.x = 1.17;
+          sphere.position.y = 1;
+          scene.add(sphere);
+      }
+      
+      function initSoutar() {
+        const loader = new THREE.GLTFLoader();
+        loader.load( 'https://cdn.glitch.com/8199502f-e529-4aa4-ba55-e8b0a29c18a5%2FsoutarNEW_ani8.glb?v=1584703887151', gltf => {              
+          soutar = gltf.scene;
+          console.log(gltf);
+          soutar.scale.set( 1, 1, 1 );
+          soutar.position.x = 1;				   
+          soutar.position.y = -2.5;				    
+          soutar.position.z = 0;	
+          mixer = new THREE.AnimationMixer(soutar);
+          console.log(mixer);
+          soutarAnimation = mixer.clipAction(gltf.animations[0]);
+          console.log(soutarAnimation);
+          scene.add(soutar);
+        });
+      }
+      
+      function ufoReturn() {
+        location.assign("https://transgalatic-library-adventure.glitch.me/ufo");
+      }
+      
+      function animate() {
+        requestAnimationFrame( animate );
+        if(soutar) {
+          if(soutarSpeech.isPlaying) {
+            soutarAnimation.play();
+            soutar.rotation.y += add;
+            if(soutar.rotation.y <= -0.14 || soutar.rotation.y >= 0.14) add *= -1;
+          }else {
+            soutarAnimation.stop();
+          }
+        }
+        sphere.rotation.y += 0.01;
+        let delta = clock.getDelta();
+        if(mixer) mixer.update(delta);
+        renderer.render( scene, camera );
+      }
+      init();
+      animate();
+      setTimeout(soutarSpeak, 1500);
+      setTimeout(ufoReturn, 48000);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,11 @@
+body {
+    margin:0px;
+    cursor: none;
+    background: #000 url(https://cdn.glitch.com/10d9c0ba-75da-4b8d-8d29-164d8311a9f6%2Fstars2.png?v=1582021938482)
+    repeat top center;
+}
+canvas {
+    display: block;
+    height: 100%;
+    width: 100%;
+}

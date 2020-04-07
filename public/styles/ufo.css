@@ -1,0 +1,97 @@
+html{
+  font-family: "Arial Black", Gadget, sans-serif;
+  color: yellow;
+}
+
+body { 
+  height: 100%;
+  width: 100%;
+  cursor: none;
+}
+
+h1 { 
+  font-size: 2.8em;
+}
+
+.energyContainer {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  width: 100%;
+  height: 60px;
+  z-index: 3;
+}
+
+#energy {
+  float: right;
+  margin-top: 15px;
+  margin-right: 10px;
+}
+
+#energyBar {
+  height: 40px;
+  width: 800px;
+  margin-top: 25px;
+  margin-right: 20px;
+  background-color: black;
+  border-style: solid;
+  border-width: 1.5px;
+  border-color: darkslategrey;
+  float: right;
+  position: relative;
+}
+
+#energyFill {
+  display: block;
+  height: 95%;
+  width: 0%;
+  padding: relative;
+  overflow: hidden;
+}
+
+@keyframes fill-up {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.earthContainer {
+  position: absolute;
+  overflow: hidden;
+  right: 0px;
+  bottom: 0px;
+  height: 60%;
+  z-index: 1;
+}
+
+.ufoContainer {
+  position: absolute;
+  left: 5%;
+  top: 36%;
+  width: 60%;
+  z-index: 2;
+}
+
+#png-ufo {
+  height: 240px;
+}
+
+.stars {
+  background: #000 url(https://cdn.glitch.com/8199502f-e529-4aa4-ba55-e8b0a29c18a5%2Fstars2.png?v=1582806172207)
+  repeat top center;
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: 0;
+}
+
+
+
