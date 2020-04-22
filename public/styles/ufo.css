@@ -13,7 +13,8 @@ h1 {
   font-size: 2.8em;
 }
 
-.energyContainer {
+#energyContainer {
+  visibility: hidden;
   position: absolute;
   right: 20px;
   top: 20px;
@@ -58,7 +59,8 @@ h1 {
   }
 }
 
-.earthContainer {
+#earthContainer {
+  visibility: hidden;
   position: absolute;
   overflow: hidden;
   right: 0px;
@@ -67,7 +69,8 @@ h1 {
   z-index: 1;
 }
 
-.ufoContainer {
+#ufoContainer {
+  visibility: hidden;
   position: absolute;
   left: 5%;
   top: 36%;
@@ -79,7 +82,7 @@ h1 {
   height: 240px;
 }
 
-.stars {
+#stars {
   background: #000 url(https://cdn.glitch.com/8199502f-e529-4aa4-ba55-e8b0a29c18a5%2Fstars2.png?v=1582806172207)
   repeat top center;
   position: absolute;
