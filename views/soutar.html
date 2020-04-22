@@ -6,22 +6,43 @@
     <link id="favicon" rel="icon" href="https://cdn.glitch.com/8199502f-e529-4aa4-ba55-e8b0a29c18a5%2Ffavicon.png?v=1582805891417" type="image/png">
   </head>
   <body>
+    <audio id="soutarVoice"></audio>
     <script src="/scripts/three.min.js"></script>
     <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/loaders/GLTFLoader.js"></script>
     <script>
       let scene, camera, renderer, soutar, sphere, mixer, soutarAnimation, spaceSound, soutarSpeech;
+      let soutarScripts = [];
+      let speaking = false;
       let add = 0.0005; 
+      
+      const soutarVoice = document.getElementById("soutarVoice");
       
       function init() {
         scene = new THREE.Scene();
         clock = new THREE.Clock();
+        loadScripts();
+        loadAudio();
         initCamera();
         initRenderer();
         initLights();
+        initSpaceSound();
         initSphere();
         initSoutar();
-        initSpaceSound();
-        initSoutarSpeech();
+      }
+      
+      function loadScripts() {
+        soutarScripts.push("https://cdn.glitch.com/8199502f-e529-4aa4-ba55-e8b0a29c18a5%2FsoutarGreetings.mp3?v=1584707458561");
+        soutarScripts.push("https://cdn.glitch.com/8199502f-e529-4aa4-ba55-e8b0a29c18a5%2Fact1.mp3?v=1587479569178");
+        soutarScripts.push("https://cdn.glitch.com/8199502f-e529-4aa4-ba55-e8b0a29c18a5%2Fact2.mp3?v=1587479576363");
+        soutarScripts.push("https://cdn.glitch.com/8199502f-e529-4aa4-ba55-e8b0a29c18a5%2Fact3.mp3?v=1587479584938");
+        soutarScripts.push("https://cdn.glitch.com/8199502f-e529-4aa4-ba55-e8b0a29c18a5%2Fact4.mp3?v=1587479593885");
+      }
+      
+      function loadAudio() {
+        if(soutarVoice.canPlayType("audio/mpeg")) {
+          soutarVoice.type = "audio/mpeg";
+          soutarVoice.src = soutarScripts[localStorage.act];
+        }
       }
           
       function initCamera() {
@@ -31,6 +52,7 @@
 
       function initRenderer() {
         renderer = new THREE.WebGLRenderer({ alpha: true });
+        renderer.outputEncoding = THREE.sRGBEncoding;
         renderer.setPixelRatio( window.devicePixelRatio );
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
@@ -62,23 +84,13 @@
         }
       }
       
-       function initSoutarSpeech() {
-        const soutarListener = new THREE.AudioListener();
-        camera.add(soutarListener);
-        soutarSpeech = new THREE.Audio(soutarListener);
-        const audioLoader = new THREE.AudioLoader();
-        try {
-          audioLoader.load("https://cdn.glitch.com/8199502f-e529-4aa4-ba55-e8b0a29c18a5%2FsoutarGreetings.mp3?v=1584707458561", buffer => {
-            soutarSpeech.setBuffer(buffer);
-            // soutarSpeech.setVolume(0.7); 
-          });
-        }catch(err) {
-          console.log(err.name + ': ' + err.message);
-        }
-      }
-      
       function soutarSpeak() {
-        soutarSpeech.play();
+        speaking = true;
+        soutarVoice.play();
+        soutarVoice.addEventListener('ended', _ => {
+          speaking = false;
+          setTimeout(ufoReturn, 3000);
+        });
       }
       
        function initSphere() {
@@ -104,17 +116,23 @@
           soutarAnimation = mixer.clipAction(gltf.animations[0]);
           console.log(soutarAnimation);
           scene.add(soutar);
+          setTimeout(soutarSpeak, 1000);
+        }, xhr => {
+          console.log("loaded:" + xhr.loaded + ", total: " + xhr.total);
+        }, err => {
+          console.log(err.name + ": " + err.message);
         });
       }
-      
+        
       function ufoReturn() {
+        localStorage.act++;
         location.assign("https://transgalatic-library-adventure.glitch.me/ufo");
       }
       
       function animate() {
         requestAnimationFrame( animate );
         if(soutar) {
-          if(soutarSpeech.isPlaying) {
+          if(speaking) {
             soutarAnimation.play();
             soutar.rotation.y += add;
             if(soutar.rotation.y <= -0.14 || soutar.rotation.y >= 0.14) add *= -1;
@@ -129,8 +147,6 @@
       }
       init();
       animate();
-      setTimeout(soutarSpeak, 1500);
-      setTimeout(ufoReturn, 48000);
     </script>
   </body>
 </html>

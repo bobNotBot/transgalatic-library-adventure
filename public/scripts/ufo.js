@@ -12,7 +12,7 @@ let energyPercent = '0%';
 let energyFill = document.getElementById("energyFill");
 let baseWidth = '0%';
 let ufoExit = false;
-let speak = false;
+let speaking = false;
 let soutarVoice = document.getElementById("soutarVoice");
 let odyssey = document.getElementById("odyssey");
 
@@ -23,10 +23,11 @@ const synth = window.speechSynthesis;
 document.addEventListener("DOMContentLoaded", () => {
   soutarVoice.loop = false;
   fillEnergyBar();
-  if(localStorage.act == 0) {
-    showHideAll('hidden');
-  }else if (localStorage.act >= 1){
-    speak = true;
+  // if(localStorage.act == 0) {
+  //   showHideAll('hidden');
+  // }else 
+  if (localStorage.act >= 1){
+    showHideAll('visible');
     sayEnergy();
   }
 });
@@ -50,12 +51,13 @@ document.body.onkeyup = (e) => {
 }
 
 socket.on('new message', data => {
-  speak = true;
   localStorage.ufoEnergy = data;
   socket.emit('patterson', 'spot');
+  speaking = true;
 });
 
 function speechSynth(word) {
+    synth.cancel();
     const utter = new SpeechSynthesisUtterance(word);
     synth.speak(utter);
 }
@@ -71,16 +73,14 @@ function showEnergy() {
     }
     soutarVoice.loop = true;
     soutarVoice.play();
-    localStorage.act = 1;
-    let assign = () => {
+    let assign = _=> {
       location.assign("https://transgalatic-library-adventure.glitch.me/soutar");
     }
     setTimeout(assign, 8000);
 }
 
 function sayEnergy() {
-  if(speak) {
-      if(soutarVoice.canPlayType("audio/mpeg")) {
+    if(soutarVoice.canPlayType("audio/mpeg")) {
       soutarVoice.type = "audio/mpeg";
       soutarVoice.src = "https://cdn.glitch.com/8199502f-e529-4aa4-ba55-e8b0a29c18a5%2FenergyLevelAt.mp3?v=1584712879183";
     }else {
@@ -88,13 +88,9 @@ function sayEnergy() {
       soutarVoice.src = "https://cdn.glitch.com/8199502f-e529-4aa4-ba55-e8b0a29c18a5%2FenergyLevelAt.ogg?v=1584712891221";
     }
     soutarVoice.play();
-    soutarVoice.addEventListener('ended', () => {
+    soutarVoice.addEventListener('ended', _=> {
        speechSynth(energyPercent);
     });
-    speak = false;
-  }else {
-    return;
-  }
 }
 
 function ufoIN() {
@@ -112,6 +108,10 @@ function ufoOUT() {
   setTimeout(exit, 1900);
   function exit() {
     ufo.style.visibility = 'hidden';
+    setTimeout(_=>{
+      location.assign("https://transgalatic-library-adventure.glitch.me");
+    }, 2000);
+    
   }
 }
 
@@ -147,28 +147,31 @@ function fillEnergyBar() {
   energyFill.style.width = energyPercent;
   baseWidth = energyPercent;
   adventureLog();
-  sayEnergy();
+  if(speaking){
+    sayEnergy();
+    speaking = false;
+  }
   
   if(energyLevel >= 25 && energyLevel < 50 && localStorage.act == 1) { 
-    location.assign("https://transgalatic-library-adventure.glitch.me/soutar");
-    localStorage.act = 2; 
+    setTimeout(goSoutar, 2000);
   }
   else if(energyLevel >= 50 && energyLevel < 75 && localStorage.act == 2) {
-   location.assign("https://transgalatic-library-adventure.glitch.me/soutar");
-   localStorage.act = 3;
+   setTimeout(goSoutar, 2000);
   }
   else if(energyLevel >= 75 && energyLevel < 90 && localStorage.act == 3) {
-    location.assign("https://transgalatic-library-adventure.glitch.me/soutar");
-    localStorage.act = 4;
+    setTimeout(goSoutar, 2000);
   }
   else if(energyLevel >= 90 && energyLevel < 100 && localStorage.act == 4) {
-    location.assign("https://transgalatic-library-adventure.glitch.me/soutar");
-    localStorage.act = 5;
+    setTimeout(goSoutar, 2000);
   }
   else if (energyLevel >= 100 && localStorage.act == 5) {
     setTimeout(ufoOUT, 5000);
     clearInterval(energyInterval);
   }
+}
+
+function goSoutar() {
+  location.assign("https://transgalatic-library-adventure.glitch.me/soutar");
 }
 
 function adventureLog() {
