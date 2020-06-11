@@ -33,6 +33,7 @@ let recognising = false;
 let resultArray = []; // array of recognition results
 let wordArray = []; // array of individual words in each result
 const wordSet = new Set(); // set of unique words per session
+let newWords = ' ';
 
 const commonWords = new Set();// set of 100+ commonly used words
 
@@ -59,9 +60,6 @@ document.body.onkeyup = (e) => {
       if(audio.canPlayType("audio/mpeg")) {
         audio.type = "audio/mpeg";
         audio.src = "https://cdn.glitch.com/8199502f-e529-4aa4-ba55-e8b0a29c18a5%2Fbeep1.mp3?v=1584109042342";
-      }else {
-        audio.type = "audio/ogg";
-        audio.src = "https://cdn.glitch.com/8199502f-e529-4aa4-ba55-e8b0a29c18a5%2Fbeep1.ogg?v=1584542812686";
       }
       spacePress();
     }
@@ -69,9 +67,6 @@ document.body.onkeyup = (e) => {
       if(audio.canPlayType("audio/mpeg")) {
         audio.type = "audio/mpeg";
         audio.src = "https://cdn.glitch.com/8199502f-e529-4aa4-ba55-e8b0a29c18a5%2FdeeDum.mp3?v=1584109067168";
-      }else {
-        audio.type = "audio/ogg";
-        audio.src = "https://cdn.glitch.com/8199502f-e529-4aa4-ba55-e8b0a29c18a5%2FdeeDum.ogg?v=1584608647369";
       }
       upPress();
     }
@@ -79,9 +74,6 @@ document.body.onkeyup = (e) => {
       if(audio.canPlayType("audio/mpeg")) {
         audio.type = "audio/mpeg";
         audio.src = "https://cdn.glitch.com/8199502f-e529-4aa4-ba55-e8b0a29c18a5%2FdoubleBeep.mp3?v=1584109073783";
-      }else {
-        audio.type = "audio/ogg";
-        audio.src = "https://cdn.glitch.com/8199502f-e529-4aa4-ba55-e8b0a29c18a5%2FdoubleBeep.ogg?v=1584608010104"
       }
       downPress();
     }
@@ -109,8 +101,10 @@ recognition.onresult = (event) => {
     console.log('-------New Words-------');
     for(let i =0; i < wordArray.length; i++) {
         if(!commonWords.has(wordArray[i]) && !wordSet.has(wordArray[i])){
-            wordSet.add(wordArray[i]);
-            console.log('+1 ' + wordArray[i]);
+            let newWord = wordArray[i];
+            wordSet.add(newWord);
+            newWords += '. ' + newWord;
+            console.log('+1 ' + newWord);
             newWordScore++;
         }
     }
@@ -121,10 +115,21 @@ recognition.onend = () => {
     calculateScore()
     logResults();
     try{
-      socket.emit('new message', totalScore);
-      socket.emit('patterson', 'clean');
+       socket.emit('word', newWords);
     }catch(err) {
       console.log(err.name + ': ' + err.message);
+    }finally{
+      try{
+        socket.emit('new message', finalScore);
+      }catch(err) {
+        console.log(err.name + ': ' + err.message);
+      }finally{
+        try{
+          socket.emit('patterson', 'clean');
+        }catch(err) {
+          console.log(err.name + ': ' + err.message);
+        }
+      }
     }
     reset(); 
 }
@@ -173,6 +178,7 @@ function reset() {
     newWordScore = 0;
     baseScore = 0;
     finalScore = 0;
+    newWords = ' ';
 }
 
 function recognise() {

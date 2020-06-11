@@ -17,7 +17,14 @@
       
       const soutarVoice = document.getElementById("soutarVoice");
       
-      function init() {
+      const onWindowResize = _=> {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        render();
+      }
+      
+      const init = _=> {
         scene = new THREE.Scene();
         clock = new THREE.Clock();
         loadScripts();
@@ -30,27 +37,27 @@
         initSoutar();
       }
       
-      function loadScripts() {
-        soutarScripts.push("https://cdn.glitch.com/8199502f-e529-4aa4-ba55-e8b0a29c18a5%2FsoutarGreetings.mp3?v=1584707458561");
-        soutarScripts.push("https://cdn.glitch.com/8199502f-e529-4aa4-ba55-e8b0a29c18a5%2Fact1.mp3?v=1587479569178");
-        soutarScripts.push("https://cdn.glitch.com/8199502f-e529-4aa4-ba55-e8b0a29c18a5%2Fact2.mp3?v=1587479576363");
-        soutarScripts.push("https://cdn.glitch.com/8199502f-e529-4aa4-ba55-e8b0a29c18a5%2Fact3.mp3?v=1587479584938");
-        soutarScripts.push("https://cdn.glitch.com/8199502f-e529-4aa4-ba55-e8b0a29c18a5%2Fact4.mp3?v=1587479593885");
+      const loadScripts = _=> {
+        soutarScripts.push("https://cdn.glitch.com/8199502f-e529-4aa4-ba55-e8b0a29c18a5%2FsoutarAct0.mp3?v=1587997148180");
+        soutarScripts.push("https://cdn.glitch.com/8199502f-e529-4aa4-ba55-e8b0a29c18a5%2FsoutarAct1.mp3?v=1588073725288");
+        soutarScripts.push("https://cdn.glitch.com/8199502f-e529-4aa4-ba55-e8b0a29c18a5%2FsoutarAct2.mp3?v=1588073747248");
+        soutarScripts.push("https://cdn.glitch.com/8199502f-e529-4aa4-ba55-e8b0a29c18a5%2FsoutarAct3.mp3?v=1587997189139");
+        soutarScripts.push("https://cdn.glitch.com/8199502f-e529-4aa4-ba55-e8b0a29c18a5%2FsoutarAct4.mp3?v=1587997201355");
       }
       
-      function loadAudio() {
+      const loadAudio = _=> {
         if(soutarVoice.canPlayType("audio/mpeg")) {
           soutarVoice.type = "audio/mpeg";
           soutarVoice.src = soutarScripts[localStorage.act];
         }
       }
           
-      function initCamera() {
+      const initCamera = _=> {
         camera = new THREE.PerspectiveCamera( 25, window.innerWidth / window.innerHeight, 1, 20000 );
         camera.position.set( 1, 1, 20 );
       }
 
-      function initRenderer() {
+      const initRenderer = _=> {
         renderer = new THREE.WebGLRenderer({ alpha: true });
         renderer.outputEncoding = THREE.sRGBEncoding;
         renderer.setPixelRatio( window.devicePixelRatio );
@@ -58,7 +65,7 @@
         document.body.appendChild(renderer.domElement);
       }
      
-      function initLights() {
+      const initLights = _=> {
         const ambientLight = new THREE.AmbientLight( 0x404040 );
         scene.add( ambientLight );
 
@@ -67,7 +74,7 @@
         scene.add( directionalLight );
       }
       
-      function initSpaceSound() {
+      const initSpaceSound = _=> {
         const spaceListener = new THREE.AudioListener();
         camera.add(spaceListener);
         spaceSound = new THREE.Audio(spaceListener);
@@ -84,7 +91,7 @@
         }
       }
       
-      function soutarSpeak() {
+      const soutarSpeak = _=> {
         speaking = true;
         soutarVoice.play();
         soutarVoice.addEventListener('ended', _ => {
@@ -93,7 +100,7 @@
         });
       }
       
-       function initSphere() {
+      const initSphere = _=> {
           let geometry = new THREE.SphereGeometry(4, 8, 8);
           let material = new THREE.MeshBasicMaterial({color: 0xcc00ff, wireframe: true});
           sphere = new THREE.Mesh(geometry, material);
@@ -102,7 +109,7 @@
           scene.add(sphere);
       }
       
-      function initSoutar() {
+      const initSoutar = _=> {
         const loader = new THREE.GLTFLoader();
         loader.load( 'https://cdn.glitch.com/8199502f-e529-4aa4-ba55-e8b0a29c18a5%2FsoutarNEW_ani8.glb?v=1584703887151', gltf => {              
           soutar = gltf.scene;
@@ -124,12 +131,16 @@
         });
       }
         
-      function ufoReturn() {
+      const ufoReturn = _=> {
         localStorage.act++;
         location.assign("https://transgalatic-library-adventure.glitch.me/ufo");
       }
       
-      function animate() {
+      const render = _=> {
+        renderer.render( scene, camera );
+      }
+      
+      const animate = _=> {
         requestAnimationFrame( animate );
         if(soutar) {
           if(speaking) {
@@ -143,10 +154,12 @@
         sphere.rotation.y += 0.01;
         let delta = clock.getDelta();
         if(mixer) mixer.update(delta);
-        renderer.render( scene, camera );
+        render();
       }
+      
       init();
       animate();
+      window.addEventListener("resize", onWindowResize, false);
     </script>
   </body>
 </html>

@@ -50,15 +50,6 @@ h1 {
   overflow: hidden;
 }
 
-@keyframes fill-up {
-  from {
-    width: 0%;
-  }
-  to {
-    width: 100%;
-  }
-}
-
 #earthContainer {
   visibility: hidden;
   position: absolute;
