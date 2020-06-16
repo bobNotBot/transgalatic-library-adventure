@@ -10,6 +10,14 @@ body {
   width: 100%;
 }
 
+#curtain {
+  position: absolute;
+  width: 100%;
+  display: block;
+/*   bottom: 100%; */
+  z-index: 100;
+}
+
 #stars {
   opacity: 0;
   background: #000 url(https://cdn.glitch.com/8199502f-e529-4aa4-ba55-e8b0a29c18a5%2Fstars2.png?v=1582806172207)
@@ -26,6 +34,7 @@ body {
 }
 
 #wait {
+  opacity: 0;
   text-align: center;
   position: fixed;
   top: 50%;
