@@ -7,10 +7,11 @@
   </head>
   <body>
     <audio id="soutarVoice"></audio>
-    <script src="/scripts/three.min.js"></script>
-    <script src="https://cdn.rawgit.com/mrdoob/three.js/master/examples/js/loaders/GLTFLoader.js"></script>
-    <script>
-      let scene, camera, renderer, soutar, sphere, mixer, soutarAnimation, spaceSound, soutarSpeech;
+    <script type="module">
+      import * as THREE from "https://cdn.glitch.com/51a42f6f-880f-4223-82c5-b33007db7b99%2Fthree.module.js?v=1586266728719";
+      import { GLTFLoader } from "https://cdn.glitch.com/51a42f6f-880f-4223-82c5-b33007db7b99%2FGLTFLoader.js?v=1586267086924";
+      
+      let scene, clock, camera, renderer, soutar, sphere, mixer, soutarAnimation, spaceSound, soutarSpeech;
       let soutarScripts = [];
       let speaking = false;
       let add = 0.0005; 
@@ -110,7 +111,7 @@
       }
       
       const initSoutar = _=> {
-        const loader = new THREE.GLTFLoader();
+        const loader = new GLTFLoader();
         loader.load( 'https://cdn.glitch.com/8199502f-e529-4aa4-ba55-e8b0a29c18a5%2FsoutarNEW_ani8.glb?v=1584703887151', gltf => {              
           soutar = gltf.scene;
           console.log(gltf);
